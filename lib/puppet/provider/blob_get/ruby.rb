@@ -31,11 +31,11 @@ Puppet::Type.type(:blob_get).provide(:get) do
         end
       end
     end
-    if Puppet::Util::Platform.windows?
-      Puppet::Util::Windows::Security.set_mode(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
-    else
-      FileUtils.chmod(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
-    end
+    #if Puppet::Util::Platform.windows?
+    #  Puppet::Util::Windows::Security.set_mode(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
+    #else
+    #  FileUtils.chmod(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
+    #end
   end
 
   def destroy
