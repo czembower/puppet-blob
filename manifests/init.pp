@@ -21,8 +21,9 @@ class blob (
   }
 
   file { 'this':
-    path => $path,
-    mode => $mode
+    path    => $path,
+    mode    => $mode,
+    require => Blob::Get['this']
   }
 }
 
