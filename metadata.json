@@ -2,9 +2,9 @@
   "name": "czembower-blob",
   "version": "0.1.0",
   "author": "Chris Zembower",
-  "summary": "",
+  "summary": "A simple Puppet module that downloads objects from Azure blob storage, using the Client ID parameter associated with a User-Assigned Managed Identity as the authentication mechanism.",
   "license": "Apache-2.0",
-  "source": "",
+  "source": "https://github.com/czembower/puppet-blob",
   "dependencies": [
 
   ],
