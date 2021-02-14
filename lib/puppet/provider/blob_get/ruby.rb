@@ -2,7 +2,7 @@ Puppet::Type.type(:blob_get).provide(:get) do
   desc 'Retrieves an object from Azure Blob storage'
 
   def create
-    metadata_uri = URI('http://169.254.169.254')
+    #metadata_uri = URI('http://169.254.169.254')
     connection = Net::HTTP.new(metadata_uri.host, metadata_uri.port)
 
     header = { 'Metadata' => 'true' }
