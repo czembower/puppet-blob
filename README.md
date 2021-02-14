@@ -51,3 +51,7 @@ mechanism. This requires the Puppet client system to be a machine running within
 environment with appropriately scoped access permission. Alternate methods require sensitive
 credentials to be present in the manifest. In contrast, the 'client ID' method is bound to
 a verified identity and therefore carries a considerably lower risk factor.
+
+The 'mode' parameter is currently implemented in a rudimentary fashion that simply applies
+the defined mode after the object is retrieved from Blob. Ongoing enforcement of posix/windows
+file permissions should be managed with a more appropriate method. 
