@@ -1,4 +1,4 @@
-Puppet::Type.type(:blob).provide(:get) do
+Puppet::Type.type(:blob_get).provide(:get) do
   desc 'Retrieves an object from Azure Blob storage'
 
   def create
