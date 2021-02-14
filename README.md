@@ -23,6 +23,7 @@ blob { '/tmp/myBlob.txt':
   account   => 'myBlobStorageAccountName',
   client_id => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
   blob_path => 'myStorageContainer/myBlob.txt',
+  mode      => 0644
 }
 ```
 
@@ -35,6 +36,7 @@ blob { '/tmp/myBlob.txt':
   account   => 'myBlobStorageAccountName',
   client_id => $::client_id,
   blob_path => 'myStorageContainer/myBlob.txt',
+  mode      => 0644
 }
 ```
 
@@ -47,5 +49,5 @@ programatically.
 This module currently only supports User-Assigned Managed Identity as the authentication
 mechanism. This requires the Puppet client system to be a machine running within the Azure
 environment with appropriately scoped access permission. Alternate methods require sensitive
-credentials to be present in the manifest. In contrast, the client_id parameter is bound to
-a verified and resource-bound identity, and therefore carries a considerably lower risk factor.
+credentials to be present in the manifest. In contrast, the 'client ID' method is bound to
+a verified identity and therefore carries a considerably lower risk factor.
