@@ -20,12 +20,12 @@ Puppet::Type.type(:blob).provide(:get) do
     Net::HTTP.start(blob_uri.host, blob_uri.port, :use_ssl => blob_uri.scheme == 'https') do |http|
       header = { 'Authorization' => "Bearer #{token}", 'x-ms-version' => '2017-11-09' }
       request = Net::HTTP::Get.new(blob_uri, header)
-      http.request(request) do |response|
-        if response.code != '200'
-          raise Puppet::Error, "#{response.code}"
+      http.request(request) do |blob_response|
+        if blob_response.code != '200'
+          raise Puppet::Error, "#{blob_response.code}"
         end
         open("#{@resource[:path]}", 'wb') do |file|
-          response.read_body do |chunk|
+          blob_response.read_body do |chunk|
             file.write(chunk)
           end
         end
