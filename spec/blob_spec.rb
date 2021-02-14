@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'blob_get' do
+describe 'blob' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }

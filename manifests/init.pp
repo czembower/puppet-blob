@@ -1,28 +1,19 @@
-# @summary A short summary of the purpose of this class
-#
-# A description of what this class does
-#
-# @example
-#   include blob
-class az_blob (
+# Class: blob
+# This doesn't work because r10k ignores
+class blob (
+  Enum['absent', 'present'] $ensure,
+  String                    $path,
   String                    $account,
+  String                    $client_id,
   String                    $blob_path,
-  String                    $path       = $title,
-  String                    $client_id  = $::client_id,
-  String                    $mode       = '0644',
-  Enum['present', 'absent'] $ensure     = present
+  String                    $owner,
+  String                    $mode
 ) {
-  blob::get { 'this':
-    ensure    => $ensure,
-    account   => $account,
-    blob_path => $blob_path,
-    client_id => $client_id,
-    mode      => $mode
-  }
+  contain blob::get
 
   file { 'this':
-    path    => $path,
-    mode    => $mode,
-    require => Blob::Get['this']
+    path  => $path,
+    owner => $owner,
+    mode  => $mode
   }
 }
