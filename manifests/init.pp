@@ -4,14 +4,14 @@
 #
 # @example
 #   include blob
-class blob (
-  String                    $account,
-  String                    $blob_path,
-  String                    $path       = $title,
-  String                    $client_id  = $::client_id,
-  String                    $mode       = '0644',
-  Enum['present', 'absent'] $ensure     = present
-) {
+#class blob (
+#  String                    $account,
+#  String                    $blob_path,
+#  String                    $path       = $title,
+#  String                    $client_id  = $::client_id,
+#  String                    $mode       = '0644',
+#  Enum['present', 'absent'] $ensure     = present
+#) {
 #  blob::get { 'this':
 #    ensure    => $ensure,
 #    account   => $account,
@@ -25,5 +25,5 @@ class blob (
 #    mode    => $mode,
 #    require => Blob::Get['this']
 #  }
-}
+#}
 
