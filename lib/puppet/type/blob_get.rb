@@ -31,8 +31,8 @@ Puppet::Type.newtype(:blob_get) do
     desc 'Path to the object in the form of [container]/[path]/[to]/[object]'
   end
 
-  newparam(:mode) do
-    desc 'Permissions that should be applied to the file after downloading'
-    defaultto('0644')
-  end
+  #newparam(:mode) do
+  #  desc 'Permissions that should be applied to the file after downloading'
+  #  defaultto('0644')
+  #end
 end
