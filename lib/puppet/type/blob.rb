@@ -33,7 +33,6 @@ Puppet::Type.newtype(:blob) do
 
   newparam(:mode) do
     desc 'Permissions that should be applied to the file after downloading'
-    defaultto('0644')
   end
 
   newparam(:unzip) do
