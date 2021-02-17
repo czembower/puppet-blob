@@ -32,11 +32,11 @@ Puppet::Type.type(:blob).provide(:get) do
       end
     end
   
-    if [:unzip]
+    if @resource[:unzip]
       unzip(@resource[:path])
     end
   
-    if [:mode]
+    if @resource[:mode]
       change_mode(@resource[:path])
     end
   end
