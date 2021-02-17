@@ -35,4 +35,11 @@ Puppet::Type.newtype(:blob) do
     desc 'Permissions that should be applied to the file after downloading'
     defaultto('0644')
   end
+
+  newparam(:unzip) do
+    desc 'Boolean to unzip downloaded Blob object'
+    defaultto(:false)
+
+  newparam(:creates) do
+    desc 'File object created by the unzip process'
 end

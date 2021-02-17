@@ -31,10 +31,13 @@ Puppet::Type.type(:blob).provide(:get) do
         end
       end
     end
-    if Puppet::Util::Platform.windows?
-      Puppet::Util::Windows::Security.set_mode(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
-    else
-      FileUtils.chmod(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
+  
+    if [:unzip]
+      unzip(@resource[:path])
+    end
+  
+    if [:mode]
+      change_mode(@resource[:path])
     end
   end
 
@@ -45,4 +48,23 @@ Puppet::Type.type(:blob).provide(:get) do
   def exists?
     File.exist?(@resource[:path])
   end
+
+  def change_mode(file)
+    if Puppet::Util::Platform.windows?
+      Puppet::Util::Windows::Security.set_mode(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
+    else
+      FileUtils.chmod_R(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
+    end
+  end
+
+  def unzip(file)
+    os.chdir(File.dirname(file))
+
+    if Facter.value(:osfamily) == 'windows'
+      cmd = "powershell -command Expand-Archive #{file}"
+    else
+      cmd = "unzip #{file}"
+    end
+
+    Puppet::Util::Execution.execute(cmd)
 end
