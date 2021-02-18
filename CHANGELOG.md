@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.1.3
+
+**Features**
+
+**Bugfixes**
+
+Fixed an issue with type definition
+
+**Known Issues**
+
 ## Release 0.1.2
 
 Address typos in documentation

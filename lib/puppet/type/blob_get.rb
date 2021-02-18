@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:blob) do
+Puppet::Type.newtype(:blob_get) do
   @doc = 'Azure Blob'
 
   ensurable do
