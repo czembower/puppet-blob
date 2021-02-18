@@ -11,19 +11,24 @@
 A simple Puppet module that downloads objects from Azure blob storage, using the Client ID
 parameter associated with a User-Assigned Managed Identity as the authentication mechanism.
 
+Optionally, the downloaded object can be unzipped, and permissions of the object and/or 
+unzipped files can be managed by specifying the 'mode' parameter.
+
 Also included are two custom facts:
 - az_meta - full output from the Azure Metadata Service at the '/metadata/instance' endpoint
-- client_id - the value of the 'clientId' tag, if is exists
+- client_id - the value of the 'clientId' tag, if it exists.
 
 ## Usage
 
 ```
-blob { '/tmp/myBlob.txt':
+blob { '/tmp/myBlob.zip':
   ensure    => present,
   account   => 'myBlobStorageAccountName',
   client_id => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-  blob_path => 'myStorageContainer/myBlob.txt',
-  mode      => 0644
+  blob_path => 'myStorageContainer/myBlob.zip',
+  mode      => 0644,
+  unzip     => true,
+  creates   => '/tmp/myBlob'
 }
 ```
 
@@ -36,7 +41,6 @@ blob { '/tmp/myBlob.txt':
   account   => 'myBlobStorageAccountName',
   client_id => $::client_id,
   blob_path => 'myStorageContainer/myBlob.txt',
-  mode      => 0644
 }
 ```
 
@@ -51,7 +55,3 @@ mechanism. This requires the Puppet client system to be a machine running within
 environment with appropriately scoped access permission. Alternate methods require sensitive
 credentials to be present in the manifest. In contrast, the 'client ID' method is bound to
 a verified identity and therefore carries a considerably lower risk factor.
-
-The 'mode' parameter is currently implemented in a rudimentary fashion that simply applies
-the defined mode after the object is retrieved from Blob. Ongoing enforcement of posix/windows
-file permissions should be managed with a more appropriate method. 
