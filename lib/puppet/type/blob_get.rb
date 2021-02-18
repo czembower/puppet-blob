@@ -15,7 +15,8 @@ Puppet::Type.newtype(:blob) do
     defaultto(:present)
   end
 
-  newparam(:path, :namevar => :true) do
+  newparam(:path) do
+    isnamevar
     desc 'Where to store the object on the local system'
   end
 
@@ -33,6 +34,14 @@ Puppet::Type.newtype(:blob) do
 
   newparam(:mode) do
     desc 'Permissions that should be applied to the file after downloading'
-    defaultto('0644')
+  end
+
+  newparam(:unzip) do
+    desc 'Boolean to unzip downloaded Blob object'
+    defaultto(:false)
+  end
+
+  newparam(:creates) do
+    desc 'File object created by the unzip process'
   end
 end
