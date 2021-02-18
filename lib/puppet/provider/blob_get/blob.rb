@@ -1,12 +1,14 @@
-Puppet::Type.type(:blob).provide(:get) do
+Puppet::Type.type(:blob_get).provide(:default) do
   desc 'Retrieves an object from Azure Blob storage'
 
   def create
     metadata_uri = URI('http://169.254.169.254')
     connection = Net::HTTP.new(metadata_uri.host, metadata_uri.port)
 
+    resource = "/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2F#{@resource[:account]}.blob.core.windows.net%2F&client_id=#{@resource[:client_id]}"
+
     header = { 'Metadata' => 'true' }
-    request_and_headers = Net::HTTP::Get.new("/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2F#{@resource[:account]}.blob.core.windows.net%2F&client_id=#{@resource[:client_id]}", header)
+    request_and_headers = Net::HTTP::Get.new(resource, header)
 
     response = connection.request(request_and_headers)
     token = JSON.parse(response.body)['access_token']
@@ -22,23 +24,24 @@ Puppet::Type.type(:blob).provide(:get) do
       request = Net::HTTP::Get.new(blob_uri, header)
       http.request(request) do |blob_response|
         if blob_response.code != '200'
-          raise Puppet::Error, "#{blob_response.code}"
+          raise Puppet::Error, "Blob Service Response: #{blob_response.code}: #{blob_response.body}"
         end
-        open("#{@resource[:path]}", 'wb') do |file|
+        open(@resource[:path].to_s, 'wb') do |file|
           blob_response.read_body do |chunk|
             file.write(chunk)
           end
         end
       end
     end
-  
-    if @resource[:unzip]
-      unzip(@resource[:path])
-    end
-  
-    if @resource[:mode]
-      change_mode(@resource[:path])
-    end
+
+    Dir.chdir(File.dirname(@resource[:path]))
+    cmd = if Facter.value(:osfamily) == 'windows'
+            "powershell -command Expand-Archive #{@resource[:path]}"
+          else
+            "unzip #{@resource[:path]}"
+          end
+
+    Puppet::Util::Execution.execute(cmd) unless @resource[:unzip] == false
   end
 
   def destroy
@@ -48,23 +51,4 @@ Puppet::Type.type(:blob).provide(:get) do
   def exists?
     File.exist?(@resource[:path])
   end
-
-  def change_mode(file)
-    if Puppet::Util::Platform.windows?
-      Puppet::Util::Windows::Security.set_mode(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
-    else
-      FileUtils.chmod_R(@resource[:mode], Puppet::FileSystem.path_string(@resource[:path]))
-    end
-  end
-
-  def unzip(file)
-    os.chdir(File.dirname(file))
-
-    if Facter.value(:osfamily) == 'windows'
-      cmd = "powershell -command Expand-Archive #{file}"
-    else
-      cmd = "unzip #{file}"
-    end
-
-    Puppet::Util::Execution.execute(cmd)
 end
