@@ -57,6 +57,7 @@ programatically, without commiting sensitive data to your repository.
 * `mode`: \[string\] Permissions that should be applied to the file after downloading (optional - default: 0644)
 * `unzip`: \[bool\] Whether to unzip downloaded Blob object (optional - default: false)
 * `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data (optional - default: undef) 
+* `cleanup`: \[bool\] Whether to remove downloaded blob object if not required after unzip operation (optional - default: false) 
 
 ## Limitations
 

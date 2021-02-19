@@ -40,4 +40,8 @@ Puppet::Type.newtype(:blob_get) do
   newparam(:creates) do
     desc 'File object created by the unzip process'
   end
+
+  newparam(:file_asset) do
+    desc 'Ensurable file object to be managed, based on "creates" parameter'
+  end
 end

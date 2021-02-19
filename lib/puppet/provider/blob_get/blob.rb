@@ -45,10 +45,10 @@ Puppet::Type.type(:blob_get).provide(:default) do
   end
 
   def destroy
-    File.unlink(@resource[:path])
+    File.unlink(@resource[:file_asset])
   end
 
   def exists?
-    File.exist?(@resource[:path])
+    File.exist?(@resource[:file_asset])
   end
 end

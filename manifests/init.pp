@@ -23,6 +23,9 @@
 # @param creates
 # Optional parameter to specify the local filesystem path where the extracted zip file contents reside.
 # Setting this option will apply the mode parameter to the unzipped files, and ensure existence.
+#
+# @param cleanup
+# Optional parameter to remove downloaded blob object if not required after unzip operation.
 
 define blob (
   String                      $account,
@@ -32,8 +35,17 @@ define blob (
   String                      $path       = $title,
   String                      $mode       = '0644',
   Boolean                     $unzip      = false,
-  Optional[String]            $creates    = undef
+  Optional[String]            $creates    = undef,
+  Boolean                     $cleanup    = false
 ) {
+
+  if $cleanup {
+    $file_asset  = $creates
+    $file_ensure = absent
+  } else {
+    $file_asset  = $path
+    $file_ensure = present
+  }
 
   if $unzip {
     if $facts['os']['family'] != 'windows' {
@@ -44,20 +56,23 @@ define blob (
   }
 
   blob_get { $path:
-    ensure    => $ensure,
-    account   => $account,
-    client_id => $client_id,
-    blob_path => $blob_path,
-    unzip     => $unzip
+    ensure     => $ensure,
+    account    => $account,
+    client_id  => $client_id,
+    blob_path  => $blob_path,
+    unzip      => $unzip,
+    file_asset => $file_asset
   }
 
-  file { $path:
-    ensure  => $ensure,
+  file { $file_asset:
+    ensure  => $file_ensure,
     mode    => $mode,
+    recurse => true,
+    force   => true,
     require => Blob_get[$path]
   }
 
-  if $creates {
+  if $creates and !$cleanup {
     file { $creates:
       ensure  => $ensure,
       mode    => $mode,
