@@ -2,7 +2,7 @@ Puppet::Type.newtype(:blob_get) do
   @doc = 'Azure Blob'
 
   ensurable do
-    desc 'whether file should be present/absent (default: present)'
+    desc 'Whether object should be present/absent on the local filesystem (default: present)'
 
     newvalue(:present) do
       provider.create
@@ -21,23 +21,19 @@ Puppet::Type.newtype(:blob_get) do
   end
 
   newparam(:account) do
-    desc 'Azure Storage Account Name'
+    desc 'Azure Storage Account name'
   end
 
   newparam(:client_id) do
-    desc 'The client_id of the associated user-managed identity'
+    desc 'The Client ID of the associated user-managed identity'
   end
 
   newparam(:blob_path) do
     desc 'Path to the object in the form of [container]/[path]/[to]/[object]'
   end
 
-  newparam(:mode) do
-    desc 'Permissions that should be applied to the file after downloading'
-  end
-
   newparam(:unzip) do
-    desc 'Boolean to unzip downloaded Blob object'
+    desc 'Whether to unzip downloaded Blob object'
     defaultto(:false)
   end
 

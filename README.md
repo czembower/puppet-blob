@@ -26,7 +26,7 @@ blob { '/tmp/myBlob.zip':
   account   => 'myBlobStorageAccountName',
   client_id => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
   blob_path => 'myStorageContainer/myBlob.zip',
-  mode      => 0644,
+  mode      => '0644',
   unzip     => true,
   creates   => '/tmp/myBlob'
 }
@@ -44,9 +44,19 @@ blob { '/tmp/myBlob.txt':
 }
 ```
 
-This method facilitates integration with infrastructure-as-code tools (such as Terraform)
+This method facilitates integration with infrastructure-as-code tools (e.g. Terraform)
 such that a compute resource, managed identity, and access controls can all be defined 
-programatically.
+programatically, without commiting sensitive data to your repository.
+
+### Parameters
+* `ensure`: Whether object should be present/absent on the local filesystem (default: present)
+* `path`: \[string\] Where to store the object on the local system (optional - implied by resource name)
+* `account`: \[string\] Azure Storage Account name (required)
+* `client_id`: \[string\] The Client ID of the associated user-assigned managed identity (required)
+* `blob_path`: \[string\] Path to the object in the form of \[container\]/\[path\]/\[to\]/\[object\] (required)
+* `mode`: \[string\] Permissions that should be applied to the file after downloading (optional - default: 0644)
+* `unzip`: \[bool\] Whether to unzip downloaded Blob object (optional - default: false)
+* `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data (optional - default: undef) 
 
 ## Limitations
 
