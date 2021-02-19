@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.1.5
+
+**Features**
+
+'creates' parameter will now purge the original zip file after extraction
+
+**Bugfixes**
+
+Documentation updates
+
 ## Release 0.1.4
 
 **Bugfixes**

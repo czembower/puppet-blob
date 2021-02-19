@@ -22,10 +22,8 @@
 #
 # @param creates
 # Optional parameter to specify the local filesystem path where the extracted zip file contents reside.
-# Setting this option will apply the mode parameter to the unzipped files, and ensure existence.
-#
-# @param cleanup
-# Optional parameter to remove downloaded blob object if not required after unzip operation.
+# Setting this option will apply the mode parameter to the unzipped files, ensure their existence,
+# and will additionally delete the original object after extracting the zip archive.
 
 define blob (
   String                      $account,
@@ -39,12 +37,10 @@ define blob (
   Boolean                     $cleanup    = false
 ) {
 
-  if $cleanup {
+  if $creates {
     $file_asset  = $creates
-    $file_ensure = absent
   } else {
     $file_asset  = $path
-    $file_ensure = present
   }
 
   if $unzip {
@@ -65,16 +61,16 @@ define blob (
   }
 
   file { $file_asset:
-    ensure  => $file_ensure,
+    ensure  => $ensure,
     mode    => $mode,
     recurse => true,
     force   => true,
     require => Blob_get[$path]
   }
 
-  if $creates and !$cleanup {
-    file { $creates:
-      ensure  => $ensure,
+  if $creates {
+    file { $path:
+      ensure  => absent,
       mode    => $mode,
       recurse => true,
       force   => true,

@@ -1,6 +1,6 @@
 {
   "name": "czembower-blob",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "Chris Zembower",
   "summary": "Downloads objects from Azure blob storage",
   "license": "Apache-2.0",
@@ -18,27 +18,9 @@
       ]
     },
     {
-      "operatingsystem": "OracleLinux",
-      "operatingsystemrelease": [
-        "7"
-      ]
-    },
-    {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "8"
-      ]
-    },
-    {
-      "operatingsystem": "Scientific",
-      "operatingsystemrelease": [
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
-        "9"
       ]
     },
     {
@@ -51,6 +33,7 @@
       "operatingsystem": "windows",
       "operatingsystemrelease": [
         "2019",
+        "2016",
         "10"
       ]
     }
@@ -58,7 +41,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.10.0 < 7.0.0"
+      "version_requirement": ">= 6 < 7.4.0"
     }
   ],
   "pdk-version": "1.18.1",
