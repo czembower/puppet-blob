@@ -36,9 +36,11 @@ Puppet::Type.type(:blob_get).provide(:default) do
 
     Dir.chdir(File.dirname(@resource[:path]))
     cmd = if Facter.value(:osfamily) == 'windows'
-            "powershell -command Expand-Archive #{@resource[:path]}"
+            escapedPath = @resource[:path].gsub(/ /, '` ')
+            "powershell -command Expand-Archive #{escapedPath}"
           else
-            "unzip #{@resource[:path]}"
+            escapedPath = @resource[:path].gsub(/ /, '\ ')
+            "unzip #{escapedPath}"
           end
 
     Puppet::Util::Execution.execute(cmd) unless @resource[:unzip] == false
