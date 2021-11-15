@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.1.9
+
+**Features**
+
+File resource permissions now default to 'undef'
+
 ## Release 0.1.6
 
 **Features**

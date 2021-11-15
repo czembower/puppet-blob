@@ -18,7 +18,7 @@
 # Optional param to unzip the object after downloading. Defaults to false.
 #
 # @param mode
-# File mode that should be applied to the object after downloading. Defaults to '0644'
+# File mode that should be applied to the object after downloading. Defaults to undef.
 #
 # @param creates
 # Optional parameter to specify the local filesystem path where the extracted zip file contents reside.
@@ -31,7 +31,7 @@ define blob (
   String                      $blob_path,
   Enum['present', 'absent']   $ensure     = present,
   String                      $path       = $title,
-  String                      $mode       = '0644',
+  String                      $mode       = undef,
   Boolean                     $unzip      = false,
   Optional[String]            $creates    = undef,
   Boolean                     $cleanup    = false

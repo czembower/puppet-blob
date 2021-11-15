@@ -54,7 +54,7 @@ programatically, without commiting sensitive data to your repository.
 * `account`: \[string\] Azure Storage Account name (required)
 * `client_id`: \[string\] The Client ID of the associated user-assigned managed identity (required)
 * `blob_path`: \[string\] Path to the object in the form of \[container\]/\[path\]/\[to\]/\[object\] (required)
-* `mode`: \[string\] Permissions that should be applied to the file after downloading (optional - default: 0644)
+* `mode`: \[string\] Permissions that should be applied to the file after downloading (optional - default: undef)
 * `unzip`: \[bool\] Whether to unzip downloaded Blob object (optional - default: false)
 * `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data, and will additionally purge the original zip archive after extraction (optional - default: undef) 
 
