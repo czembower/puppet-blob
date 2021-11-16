@@ -1,6 +1,6 @@
 {
   "name": "czembower-blob",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "author": "Chris Zembower",
   "summary": "Downloads objects from Azure blob storage",
   "license": "Apache-2.0",

@@ -31,7 +31,7 @@ define blob (
   String                      $blob_path,
   Enum['present', 'absent']   $ensure     = present,
   String                      $path       = $title,
-  String                      $mode       = undef,
+  Optional[String]            $mode       = undef,
   Boolean                     $unzip      = false,
   Optional[String]            $creates    = undef,
   Boolean                     $cleanup    = false
