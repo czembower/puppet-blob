@@ -58,7 +58,7 @@ define blob (
   }
 
   if $azcopy {
-    if $facts['os']['family'] != 'windows' {
+    if $facts['os']['family'] == 'windows' {
 
       file { 'C:/ProgramData/azcopy':
         ensure => directory
