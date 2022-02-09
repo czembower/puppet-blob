@@ -24,6 +24,12 @@
 # Optional parameter to specify the local filesystem path where the extracted zip file contents reside.
 # Setting this option will apply the mode parameter to the unzipped files, ensure their existence,
 # and will additionally delete the original object after extracting the zip archive.
+# @param mode
+# File mode that should be applied to the object after downloading. Defaults to undef.
+#
+# @param azcopy
+# Optional parameter to specify whether to utilize the azcopy utility (recommended for large file transfers). Defaults to false.
+
 
 define blob (
   String                      $account,
@@ -34,7 +40,7 @@ define blob (
   Optional[String]            $mode       = undef,
   Boolean                     $unzip      = false,
   Optional[String]            $creates    = undef,
-  Boolean                     $cleanup    = false
+  Boolean                     $azcopy     = false
 ) {
 
   if $creates {
@@ -51,13 +57,110 @@ define blob (
     }
   }
 
+  if $azcopy {
+    if $facts['os']['family'] != 'windows' {
+
+      file { 'C:/ProgramData/azcopy':
+        ensure => directory
+      }
+
+      file { 'C:/ProgramData/azcopy/src':
+        ensure  => directory,
+        require => File['C:/ProgramData/azcopy']
+      }
+
+      file { 'C:/ProgramData/azcopy/bin':
+        ensure  => directory,
+        require => File['C:/ProgramData/azcopy']
+      }
+
+      exec { 'azcopy_download':
+        command  => 'Start-BitsTransfer -Source "https://aka.ms/downloadazcopy-v10-windows" -Destination "C:/ProgramData/azcopy/src/azcopy.zip"',
+        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy.zip) { exit 0 } else { exit 1}',
+        provider => powershell,
+        require  => File['C:/ProgramData/azcopy/src']
+      }
+
+      exec {'expand_azcopy':
+        command  => 'Expand-Archive "C:/ProgramData/azcopy/src/azcopy.zip" -DestinationPath "C:/ProgramData/azcopy/src/"',
+        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy_windows*) { exit 0 } else { exit 1}',
+        provider => powershell,
+        require  => Exec['azcopy_download']
+      }
+
+      exec {'install_azcopy':
+        command  => 'Copy-Item "C:/ProgramData/azcopy/src/\$(Get-ChildItem C:/ProgramData/azcopy/src | Where-Object {\$_.Name -like "azcopy_windows*"} | Select-Object -ExpandProperty Name)/azcopy.exe" -Destination "C:/ProgramData/azcopy/bin/"',
+        unless   => 'if (Test-Path C:/Windows/System32/azcopy.exe) { exit 0 } else { exit 1}',
+        provider => powershell,
+        require  => [
+          Exec['expand_azcopy'],
+          File['C:/ProgramData/azcopy/bin']
+        ]
+      }
+
+      file { 'C:/ProgramData/azcopy/bin/azcopy':
+        ensure  => present,
+        mode    => '0777',
+        require => Exec['install_azcopy']
+      }
+    }
+    else {
+      package { 'tar':
+        ensure => present
+      }
+
+      file { '/opt/azcopy':
+        ensure => directory
+      }
+
+      file { '/opt/azcopy/src':
+        ensure  => directory,
+        require => File['/opt/azcopy']
+      }
+
+      file { '/opt/azcopy/bin':
+        ensure  => directory,
+        require => File['/opt/azcopy']
+      }
+
+      exec { 'azcopy_download':
+        command => '/usr/bin/env curl -L https://aka.ms/downloadazcopy-v10-windows -o /opt/azcopy/src/azcopy.tar.gz',
+        unless  => '/bin/test -f /opt/azcopy/src/azcopy.tar.gz',
+        require => File['/opt/azcopy/src']
+      }
+
+      exec {'expand_azcopy':
+        command => '/usr/bin/env tar -xzf /opt/azcopy/src/azcopy.tar.gz',
+        cwd     => '/opt/azcopy/src',
+        unless  => 'test -d /opt/azcopy/src/azcopy_*',
+        require => Exec['azcopy_download']
+      }
+
+      exec {'install_azcopy':
+        command => '/usr/bin/env cp /opt/azcopy/src/$(ls /opt/azcopy/src/ | grep _)/azcopy /opt/azcopy/bin/',
+        unless  => 'test -f /opt/azcopy/bin/azcopy',
+        require => [
+          Exec['expand_azcopy'],
+          File['/opt/azcopy/bin']
+        ]
+      }
+
+      file { '/opt/azcopy/bin/azcopy':
+        ensure  => present,
+        mode    => '0777',
+        require => Exec['install_azcopy']
+      }
+    }
+  }
+
   blob_get { $path:
     ensure     => $ensure,
     account    => $account,
     client_id  => $client_id,
     blob_path  => $blob_path,
     unzip      => $unzip,
-    file_asset => $file_asset
+    file_asset => $file_asset,
+    azcopy     => $azcopy
   }
 
   file { $file_asset:

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.0
+
+**Features**
+
+Added support for azcopy as transfer utility
+
 ## Release 0.1.9
 
 **Features**

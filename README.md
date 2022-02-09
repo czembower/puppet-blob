@@ -39,7 +39,7 @@ the client_id from an Azure tag named "clientId" if it exists:
 blob { '/tmp/myBlob.txt':
   ensure    => present,
   account   => 'myBlobStorageAccountName',
-  client_id => $::client_id,
+  client_id => $facts['client_id'],
   blob_path => 'myStorageContainer/myBlob.txt',
 }
 ```
@@ -47,6 +47,18 @@ blob { '/tmp/myBlob.txt':
 This method facilitates integration with infrastructure-as-code tools (e.g. Terraform)
 such that a compute resource, managed identity, and access controls can all be defined 
 programatically, without commiting sensitive data to your repository.
+
+Microsoft azcopy can optionally be used to provide increased performance:
+
+```
+blob { '/tmp/veryLargeFile.zip':
+  ensure    => present,
+  account   => 'myBlobStorageAccountName',
+  client_id => $facts['client_id'],
+  blob_path => 'myStorageContainer/veryLargeFile.zip',
+  azcopy    => true
+}
+```
 
 ### Parameters
 * `ensure`: Whether object should be present/absent on the local filesystem (default: present)
@@ -56,7 +68,22 @@ programatically, without commiting sensitive data to your repository.
 * `blob_path`: \[string\] Path to the object in the form of \[container\]/\[path\]/\[to\]/\[object\] (required)
 * `mode`: \[string\] Permissions that should be applied to the file after downloading (optional - default: undef)
 * `unzip`: \[bool\] Whether to unzip downloaded Blob object (optional - default: false)
-* `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data, and will additionally purge the original zip archive after extraction (optional - default: undef) 
+* `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data, and will additionally purge the original zip archive after extraction (optional - default: undef)
+* `azcopy`: \[bool\] Utilize the azcopy utility (recommended for large file transfers, but has additional requirements -- see below) (optional - default: false)
+
+Leaving azcopy => false (default) will utilize Ruby standard library Net/Http to handle download operations.
+This is perfectly suitable for common use, but in the case of large file transfers (over several GB), it is
+recommended to enable the azcopy option. Doing so will result in installation of the latest version of azcopy
+available from Microsoft at the following paths:
+
+* `Linux:` /opt/azcopy/bin/azcopy
+* `Windows:` C:/ProgramData/azcopy/bin/azcopy.exe
+
+Note that the azcopy method requires two system environment variables to be set, regardless of operating system:
+```
+AZCOPY_AUTO_LOGIN_TYPE=MSI
+AZCOPY_MSI_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
 
 ## Limitations
 
@@ -65,3 +92,5 @@ mechanism. This requires the Puppet client system to be a machine running within
 environment with appropriately scoped access permission. Alternate methods require sensitive
 credentials to be present in the manifest. In contrast, the 'client ID' method is bound to
 a verified identity and therefore carries a considerably lower risk factor.
+
+Please open an issue at the Project URL if you would like to see support for alternative authentication methods.
