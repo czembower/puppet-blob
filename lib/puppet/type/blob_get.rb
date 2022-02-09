@@ -44,4 +44,8 @@ Puppet::Type.newtype(:blob_get) do
   newparam(:file_asset) do
     desc 'Ensurable file object to be managed, based on "creates" parameter'
   end
+
+  newparam(:azcopy) do
+    desc 'Utilize the azcopy utility'
+  end
 end
