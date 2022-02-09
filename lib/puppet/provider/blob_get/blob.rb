@@ -2,6 +2,8 @@ Puppet::Type.type(:blob_get).provide(:default) do
   desc 'Retrieves an object from Azure Blob storage'
 
   def create
+    blob_uri = URI("https://#{@resource[:account]}.blob.core.windows.net/#{@resource[:blob_path]}")
+
     if @resource[:azcopy] == false
       metadata_uri = URI('http://169.254.169.254')
       connection = Net::HTTP.new(metadata_uri.host, metadata_uri.port)
@@ -17,8 +19,6 @@ Puppet::Type.type(:blob_get).provide(:default) do
       if token.nil?
         raise Puppet::Error, 'No token received from Azure metadata service.'
       end
-
-      blob_uri = URI("https://#{@resource[:account]}.blob.core.windows.net/#{@resource[:blob_path]}")
 
       Net::HTTP.start(blob_uri.host, blob_uri.port, :use_ssl => blob_uri.scheme == 'https') do |http|
         header = { 'Authorization' => "Bearer #{token}", 'x-ms-version' => '2017-11-09' }
