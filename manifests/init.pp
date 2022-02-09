@@ -90,7 +90,7 @@ define blob (
 
       exec {'install_azcopy':
         command  => 'Copy-Item "C:/ProgramData/azcopy/src/\$(Get-ChildItem C:/ProgramData/azcopy/src | Where-Object {\$_.Name -like "azcopy_windows*"} | Select-Object -ExpandProperty Name)/azcopy.exe" -Destination "C:/ProgramData/azcopy/bin/"',
-        unless   => 'if (Test-Path C:/Windows/System32/azcopy.exe) { exit 0 } else { exit 1}',
+        unless   => 'if (Test-Path C:/ProgramData/azcopy/bin/azcopy.exe) { exit 0 } else { exit 1}',
         provider => powershell,
         require  => [
           Exec['expand_azcopy'],
