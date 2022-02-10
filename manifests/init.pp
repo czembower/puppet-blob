@@ -19,6 +19,7 @@
 #
 # @param mode
 # File mode that should be applied to the object after downloading. Defaults to undef.
+# If mode is defined and unzip is selected, extracted files will be managed recursively.
 #
 # @param creates
 # Optional parameter to specify the local filesystem path where the extracted zip file contents reside.
@@ -49,12 +50,14 @@ define blob (
     $file_asset  = $path
   }
 
+  if ($mode != undef) and ($unzip == true) {
+    $recurse = true
+  } else {
+    $recurse = false
+  }
+
   if $unzip {
-    if $facts['os']['family'] != 'windows' {
-      package { 'unzip':
-        ensure => present
-      }
-    }
+    include blob::unzip
   }
 
   if $azcopy {
@@ -74,7 +77,7 @@ define blob (
   file { $file_asset:
     ensure  => $ensure,
     mode    => $mode,
-    recurse => true,
+    recurse => $recurse,
     force   => true,
     require => Blob_get[$path]
   }

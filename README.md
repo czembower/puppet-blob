@@ -69,7 +69,9 @@ blob { '/tmp/veryLargeFile.zip':
 * `mode`: \[string\] Permissions that should be applied to the file after downloading (optional - default: undef)
 * `unzip`: \[bool\] Whether to unzip downloaded Blob object (optional - default: false)
 * `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data, and will additionally purge the original zip archive after extraction (optional - default: undef)
-* `azcopy`: \[bool\] Utilize the azcopy utility (recommended for large file transfers, but has additional requirements -- see below) (optional - default: false)
+* `azcopy`: \[bool\] Utilize the azcopy utility (recommended for large file transfers (optional - default: false)
+
+If mode is defined and unzip is selected, extracted files will be managed recursively.
 
 Leaving azcopy => false (default) will utilize Ruby standard library Net/Http to handle download operations.
 This is perfectly suitable for common use, but in the case of large file transfers (over several GB), it is
@@ -78,12 +80,6 @@ available from Microsoft at the following paths:
 
 * `Linux:` /opt/azcopy/bin/azcopy
 * `Windows:` C:/ProgramData/azcopy/bin/azcopy.exe
-
-Note that the azcopy method requires two system environment variables to be set, regardless of operating system:
-```
-AZCOPY_AUTO_LOGIN_TYPE=MSI
-AZCOPY_MSI_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-```
 
 ## Limitations
 
