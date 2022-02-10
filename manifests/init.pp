@@ -58,7 +58,7 @@ define blob (
   }
 
   if $azcopy {
-    include ::azcopy
+    include blob::azcopy
   }
 
   blob_get { $path:

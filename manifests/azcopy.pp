@@ -1,4 +1,4 @@
-class azcopy {
+class blob::azcopy {
   if $facts['os']['family'] == 'windows' {
 
       file { 'C:/ProgramData/azcopy':
