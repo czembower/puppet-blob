@@ -37,10 +37,10 @@ Puppet::Type.type(:blob_get).provide(:default) do
     else
       azcopy_cmd = if Facter.value(:osfamily) == 'windows'
               escaped_path = @resource[:path].gsub(%r{ }, '` ')
-              "powershell -command C:/ProgramData/azcopy/bin/azcopy.exe copy #{blob_uri} #{escaped_path}"
+              "powershell -command $env:AZCOPY_AUTO_LOGIN_TYPE = 'MSI'; $env:AZCOPY_MSI_CLIENT_ID = '#{@resource[:client_id]}'; C:/ProgramData/azcopy/bin/azcopy.exe copy #{blob_uri} #{escaped_path}"
             else
               escaped_path = @resource[:path].gsub(%r{ }, '\ ')
-              "/opt/azcopy/bin/azcopy copy #{blob_uri} #{escaped_path}"
+              "AZCOPY_AUTO_LOGIN_TYPE='MSI' AZCOPY_MSI_CLIENT_ID='#{@resource[:client_id]}' /opt/azcopy/bin/azcopy copy #{blob_uri} #{escaped_path}"
             end
       Puppet::Util::Execution.execute(azcopy_cmd)
     end
