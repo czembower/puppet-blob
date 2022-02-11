@@ -17,21 +17,21 @@ class blob::azcopy {
 
       exec { 'azcopy_download':
         command  => 'Start-BitsTransfer -Source "https://aka.ms/downloadazcopy-v10-windows" -Destination "C:/ProgramData/azcopy/src/azcopy.zip"',
-        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy.zip) { exit 0 } else { exit 1}',
+        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy.zip) { exit 0 } else { exit 1 }',
         provider => powershell,
         require  => File['C:/ProgramData/azcopy/src']
       }
 
       exec {'expand_azcopy':
         command  => 'Expand-Archive "C:/ProgramData/azcopy/src/azcopy.zip" -DestinationPath "C:/ProgramData/azcopy/src/"',
-        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy_windows*) { exit 0 } else { exit 1}',
+        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy_windows*) { exit 0 } else { exit 1 }',
         provider => powershell,
         require  => Exec['azcopy_download']
       }
 
       exec {'install_azcopy':
         command  => 'Copy-Item "C:/ProgramData/azcopy/src/azcopy_windows*/azcopy.exe" -Destination "C:/ProgramData/azcopy/bin/"',
-        unless   => 'if (Test-Path C:/ProgramData/azcopy/bin/azcopy.exe) { exit 0 } else { exit 1}',
+        unless   => 'if (Test-Path C:/ProgramData/azcopy/bin/azcopy.exe) { exit 0 } else { exit 1 }',
         provider => powershell,
         require  => [
           Exec['expand_azcopy'],
