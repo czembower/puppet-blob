@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.2
+
+**Bugfixes**
+
+- azcopy Windows download method
+- Fix escaped paths in unzip
+
+
 ## Release 0.3.0
 
 **Features**
