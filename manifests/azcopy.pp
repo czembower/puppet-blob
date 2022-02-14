@@ -65,7 +65,7 @@ class blob::azcopy {
       }
 
       exec { 'azcopy_download':
-        command => '/usr/bin/env curl -L https://aka.ms/downloadazcopy-v10-windows -o /opt/azcopy/src/azcopy.tar.gz',
+        command => '/usr/bin/env curl -L https://aka.ms/downloadazcopy-v10-linux -o /opt/azcopy/src/azcopy.tar.gz',
         unless  => '/bin/test -f /opt/azcopy/src/azcopy.tar.gz',
         require => File['/opt/azcopy/src']
       }

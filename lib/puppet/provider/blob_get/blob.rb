@@ -36,8 +36,7 @@ Puppet::Type.type(:blob_get).provide(:default) do
       end
     else
       azcopy_cmd = if Facter.value(:osfamily) == 'windows'
-                     escaped_path = @resource[:path].gsub(%r{ }, '` ')
-                     "powershell -command $env:AZCOPY_AUTO_LOGIN_TYPE = 'MSI'; $env:AZCOPY_MSI_CLIENT_ID = '#{@resource[:client_id]}'; C:/ProgramData/azcopy/bin/azcopy.exe copy #{blob_uri} #{escaped_path}"
+                     "powershell -command $env:AZCOPY_AUTO_LOGIN_TYPE = 'MSI'; $env:AZCOPY_MSI_CLIENT_ID = '#{@resource[:client_id]}'; C:/ProgramData/azcopy/bin/azcopy.exe copy #{blob_uri} '#{@resource[:path]}'"
                    else
                      escaped_path = @resource[:path].gsub(%r{ }, '\ ')
                      "AZCOPY_AUTO_LOGIN_TYPE='MSI' AZCOPY_MSI_CLIENT_ID='#{@resource[:client_id]}' /opt/azcopy/bin/azcopy copy #{blob_uri} #{escaped_path}"
@@ -47,8 +46,7 @@ Puppet::Type.type(:blob_get).provide(:default) do
 
     Dir.chdir(File.dirname(@resource[:path]))
     cmd = if Facter.value(:osfamily) == 'windows'
-            escaped_path = @resource[:path].gsub(%r{ }, '` ')
-            "powershell -command $dir = (Get-Item '#{escaped_path}').DirectoryName; Add-Type -Assembly 'System.IO.Compression.Filesystem'; [System.IO.Compression.ZipFile]::ExtractToDirectory('#{escaped_path}', $dir)"
+            "powershell -command $dir = (Get-Item '#{@resource[:path]}').DirectoryName; Add-Type -Assembly 'System.IO.Compression.Filesystem'; [System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', $dir)"
           else
             escaped_path = @resource[:path].gsub(%r{ }, '\ ')
             "unzip #{escaped_path}"
