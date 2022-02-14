@@ -16,8 +16,8 @@ class blob::azcopy {
       }
 
       exec { 'azcopy_download':
-        command  => 'Start-BitsTransfer -Source "https://aka.ms/downloadazcopy-v10-windows" -Destination "C:/ProgramData/azcopy/src/azcopy.zip"',
-        unless   => 'if (Test-Path C:/ProgramData/azcopy/src/azcopy.zip) { exit 0 } else { exit 1 }',
+        command  => 'Invoke-WebRequest -UseBasicParsing -Uri (Invoke-WebRequest -UseBasicParsing https://aka.ms/downloadazcopy-v10-windows -MaximumRedirection 0 -ErrorAction silentlycontinue).headers.location -OutFile C:/ProgramData/azcopy/src/azcopy.zip',
+        unless   => 'if ((Test-Path C:/ProgramData/azcopy/src/azcopy.zip) -and (Get-Item C:/ProgramData/azcopy/src/azcopy.zip).Length -gt 100) { exit 0 } else { exit 1 }',
         provider => powershell,
         require  => File['C:/ProgramData/azcopy/src']
       }
