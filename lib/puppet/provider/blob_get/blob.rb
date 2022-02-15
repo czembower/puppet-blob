@@ -59,7 +59,7 @@ Puppet::Type.type(:blob_get).provide(:default) do
     cmd = if Facter.value(:osfamily) == 'windows'
             "powershell -command $dir = (Get-Item '#{@resource[:path]}').DirectoryName;" \
               "Add-Type -Assembly 'System.IO.Compression.Filesystem';" \
-              "[System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', $dir)"
+              "[System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', $dir, true)"
           else
             escaped_path = @resource[:path].gsub(%r{ }, '\ ')
             "unzip #{escaped_path}"
