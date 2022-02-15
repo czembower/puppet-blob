@@ -36,23 +36,45 @@ Puppet::Type.type(:blob_get).provide(:default) do
       end
     else
       azcopy_cmd = if Facter.value(:osfamily) == 'windows'
-                     "powershell -command $env:AZCOPY_AUTO_LOGIN_TYPE = 'MSI'; $env:AZCOPY_MSI_CLIENT_ID = '#{@resource[:client_id]}'; C:/ProgramData/azcopy/bin/azcopy.exe copy #{blob_uri} '#{@resource[:path]}'"
+                     "powershell -command $env:AZCOPY_AUTO_LOGIN_TYPE = 'MSI';" \
+                     "$env:AZCOPY_MSI_CLIENT_ID = '#{@resource[:client_id]}';" \
+                     "C:/ProgramData/azcopy/bin/azcopy.exe copy #{blob_uri} '#{@resource[:path]}'"
                    else
                      escaped_path = @resource[:path].gsub(%r{ }, '\ ')
-                     "AZCOPY_AUTO_LOGIN_TYPE='MSI' AZCOPY_MSI_CLIENT_ID='#{@resource[:client_id]}' /opt/azcopy/bin/azcopy copy #{blob_uri} #{escaped_path}"
+                     "AZCOPY_AUTO_LOGIN_TYPE='MSI' " \
+                     "AZCOPY_MSI_CLIENT_ID='#{@resource[:client_id]}' " \
+                     "/opt/azcopy/bin/azcopy copy #{blob_uri} #{escaped_path}"
                    end
       Puppet::Util::Execution.execute(azcopy_cmd)
     end
 
+    wait_for_lock_cmd = '$lock=$True;' \
+                        "While ($lock){If([System.IO.File]::Exists('#{@resource[:path]}')){Try{$stream=[System.IO.File]::Open('#{@resource[:path]}','Open','Write');" \
+                        '$stream.Close();' \
+                        '$stream.Dispose();' \
+                        '$lock=$False}Catch{$lock=$True;Start-Sleep 1}}}'
+    Puppet::Util::Execution.execute(wait_for_lock_cmd)
+
     Dir.chdir(File.dirname(@resource[:path]))
     cmd = if Facter.value(:osfamily) == 'windows'
-            "powershell -command $dir = (Get-Item '#{@resource[:path]}').DirectoryName; Add-Type -Assembly 'System.IO.Compression.Filesystem'; [System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', $dir)"
+            "powershell -command $dir = (Get-Item '#{@resource[:path]}').DirectoryName;" \
+              "Add-Type -Assembly 'System.IO.Compression.Filesystem';" \
+              "[System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', $dir)"
           else
             escaped_path = @resource[:path].gsub(%r{ }, '\ ')
             "unzip #{escaped_path}"
           end
 
     Puppet::Util::Execution.execute(cmd) unless @resource[:unzip] == false
+
+    if Facter.value(:osfamily) == 'windows'
+      wait_for_post_unzip_lock_cmd = '$lock=$True;' \
+                                     "While ($lock){If([System.IO.File]::Exists('#{@resource[:file_asset]}')){Try{$stream=[System.IO.File]::Open('#{@resource[:file_asset]}','Open','Write');" \
+                                     '$stream.Close();' \
+                                     '$stream.Dispose();' \
+                                     '$lock=$False}Catch{$lock=$True;Start-Sleep 1}}}'
+      Puppet::Util::Execution.execute(wait_for_post_unzip_lock_cmd) unless @resource[:unzip] == false
+    end
   end
 
   def destroy

@@ -30,8 +30,7 @@
 #
 # @param azcopy
 # Optional parameter to specify whether to utilize the azcopy utility (recommended for large file transfers). Defaults to false.
-
-
+#
 define blob (
   String                      $account,
   String                      $client_id,

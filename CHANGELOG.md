@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.3
+
+**Features**
+
+- On Windows, added logic to wait for file lock availability after downloading and/or unzipping Blobs
+
 ## Release 0.3.2
 
 **Bugfixes**

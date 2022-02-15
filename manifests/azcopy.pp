@@ -1,3 +1,4 @@
+# Acquire latest azcopy
 class blob::azcopy {
   if $facts['os']['family'] == 'windows' {
 
