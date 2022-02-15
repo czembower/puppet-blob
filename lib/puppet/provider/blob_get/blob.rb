@@ -48,12 +48,12 @@ Puppet::Type.type(:blob_get).provide(:default) do
       Puppet::Util::Execution.execute(azcopy_cmd)
     end
 
-    wait_for_lock_cmd = '$lock=$True;' \
+    wait_for_lock_cmd = 'powershell -command $lock=$True;' \
                         "While ($lock){If([System.IO.File]::Exists('#{@resource[:path]}')){Try{$stream=[System.IO.File]::Open('#{@resource[:path]}','Open','Write');" \
                         '$stream.Close();' \
                         '$stream.Dispose();' \
                         '$lock=$False}Catch{$lock=$True;Start-Sleep 1}}}'
-    Puppet::Util::Execution.execute(wait_for_lock_cmd)
+    Puppet::Util::Execution.execute(wait_for_lock_cmd) if Facter.value(:osfamily) == 'windows'
 
     Dir.chdir(File.dirname(@resource[:path]))
     cmd = if Facter.value(:osfamily) == 'windows'
