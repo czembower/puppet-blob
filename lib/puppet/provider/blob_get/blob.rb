@@ -68,7 +68,7 @@ Puppet::Type.type(:blob_get).provide(:default) do
     Puppet::Util::Execution.execute(cmd) unless @resource[:unzip] == false
 
     if Facter.value(:osfamily) == 'windows'
-      wait_for_post_unzip_lock_cmd = '$lock=$True;' \
+      wait_for_post_unzip_lock_cmd = 'powershell -command $lock=$True;' \
                                      "While ($lock){If([System.IO.File]::Exists('#{@resource[:file_asset]}')){Try{$stream=[System.IO.File]::Open('#{@resource[:file_asset]}','Open','Write');" \
                                      '$stream.Close();' \
                                      '$stream.Dispose();' \
