@@ -53,19 +53,28 @@ Puppet::Type.type(:blob_get).provide(:default) do
                         '$stream.Close();' \
                         '$stream.Dispose();' \
                         '$lock=$False}Catch{$lock=$True;Start-Sleep 1}}}'
+
     Puppet::Util::Execution.execute(wait_for_lock_cmd) if Facter.value(:osfamily) == 'windows'
 
-    Dir.chdir(File.dirname(@resource[:path]))
-    cmd = if Facter.value(:osfamily) == 'windows'
-            "powershell -command $dir = (Get-Item '#{@resource[:path]}').DirectoryName;" \
-              "Add-Type -Assembly 'System.IO.Compression.Filesystem';" \
-              "[System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', $dir)"
-          else
-            escaped_path = @resource[:path].gsub(%r{ }, '\ ')
-            "unzip #{escaped_path}"
-          end
+    if @resource[:unzip] == true
+      unzip_dir_name = File.basename(@resource[:path], File.extname(@resource[:path]))
+      working_path = File.dirname(@resource[:path]) + '/' + unzip_dir_name
+      Dir.mkdir(working_path)
+    else
+      working_path = File.dirname(@resource[:path])
+    end
 
-    Puppet::Util::Execution.execute(cmd) unless @resource[:unzip] == false
+    Dir.chdir(working_path)
+
+    unzip_cmd = if Facter.value(:osfamily) == 'windows'
+                  "powershell -command Add-Type -Assembly 'System.IO.Compression.Filesystem';" \
+                  "[System.IO.Compression.ZipFile]::ExtractToDirectory('#{@resource[:path]}', '#{working_path}')"
+                else
+                  escaped_path = working_path.gsub(%r{ }, '\ ')
+                  "unzip #{escaped_path}"
+                end
+
+    Puppet::Util::Execution.execute(unzip_cmd) unless @resource[:unzip] == false
 
     if Facter.value(:osfamily) == 'windows'
       wait_for_post_unzip_lock_cmd = 'powershell -command $lock=$True;' \

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.8
+
+**Features**
+
+- Zip archives will now be extracted into paths following the convention: {resource path}/{archive name}
+
 ## Release 0.3.3
 
 **Features**
