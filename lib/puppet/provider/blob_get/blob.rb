@@ -54,7 +54,9 @@ Puppet::Type.type(:blob_get).provide(:default) do
                         '$stream.Dispose();' \
                         '$lock=$False}Catch{$lock=$True;Start-Sleep 1}}}'
 
-    Puppet::Util::Execution.execute(wait_for_lock_cmd) if Facter.value(:osfamily) == 'windows'
+    Timeout::timeout(30, Timeout::Error) do
+      Puppet::Util::Execution.execute(wait_for_lock_cmd) if Facter.value(:osfamily) == 'windows'
+    end
 
     if @resource[:unzip] == true
       unzip_dir_name = File.basename(@resource[:path], File.extname(@resource[:path]))
@@ -82,7 +84,10 @@ Puppet::Type.type(:blob_get).provide(:default) do
                                      '$stream.Close();' \
                                      '$stream.Dispose();' \
                                      '$lock=$False}Catch{$lock=$True;Start-Sleep 1}}}'
-      Puppet::Util::Execution.execute(wait_for_post_unzip_lock_cmd) unless @resource[:unzip] == false
+
+      Timeout::timeout(30, Timeout::Error) do
+        Puppet::Util::Execution.execute(wait_for_post_unzip_lock_cmd, :failonfail => false) unless @resource[:unzip] == false
+      end
     end
   end
 
