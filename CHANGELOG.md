@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.9
+
+### Features
+
+- Documentation updates
+- Removed az_meta custom fact, as this is now provided by core puppet (az_metadata)
+
 ## Release 0.3.8
 
 **Features**
@@ -20,7 +27,6 @@ All notable changes to this project will be documented in this file.
 
 - azcopy Windows download method
 - Fix escaped paths in unzip
-
 
 ## Release 0.3.0
 
@@ -78,8 +84,9 @@ All notable changes to this project will be documented in this file.
 ## Release 0.1.1
 
 **Features**
-1. File mode/permisions management is now handled by native Puppet File class
-1. Added unzip capability with 'creates' parameter
+
+- File mode/permisions management is now handled by native Puppet File class
+- Added unzip capability with 'creates' parameter
 
 ## Release 0.1.0
 
