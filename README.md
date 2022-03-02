@@ -72,6 +72,7 @@ blob { '/tmp/veryLargeFile.zip':
 - `unzip`: \[bool\] Whether to unzip downloaded Blob object (optional - default: false)
 - `creates`: \[string\] File object created by the unzip process - controls mode/presence of extracted data, and will additionally purge the original zip archive after extraction (optional - default: undef)
 - `azcopy`: \[bool\] Utilize the azcopy utility (recommended for large file transfers (optional - default: false)
+- `mkdir`: \[bool\] Controls the creation of the target directory for unzipped objects (optional - default: true)
 
 If 'mode' is defined and 'unzip' is selected, extracted files will be managed recursively. This is useful for directories.
 
