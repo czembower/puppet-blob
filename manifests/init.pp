@@ -41,7 +41,7 @@ define blob (
   Boolean                     $unzip      = false,
   Optional[String]            $creates    = undef,
   Boolean                     $azcopy     = false,
-  Boolean                     $mkdir      = false
+  Boolean                     $mkdir      = true
 ) {
 
   if $creates {
