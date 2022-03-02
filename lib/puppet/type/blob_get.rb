@@ -47,5 +47,11 @@ Puppet::Type.newtype(:blob_get) do
 
   newparam(:azcopy) do
     desc 'Utilize the azcopy utility'
+    defaultto(:false)
+  end
+
+  newparam(:mkdir) do
+    desc 'Create target directory'
+    defaultto(:true)
   end
 end

@@ -25,12 +25,12 @@
 # Optional parameter to specify the local filesystem path where the extracted zip file contents reside.
 # Setting this option will apply the mode parameter to the unzipped files, ensure their existence,
 # and will additionally delete the original object after extracting the zip archive.
-# @param mode
-# File mode that should be applied to the object after downloading. Defaults to undef.
 #
 # @param azcopy
 # Optional parameter to specify whether to utilize the azcopy utility (recommended for large file transfers). Defaults to false.
 #
+# @param mkdir
+# Whether to create the target directory for unzipping the object. Defaults to true.
 define blob (
   String                      $account,
   String                      $client_id,
@@ -40,7 +40,8 @@ define blob (
   Optional[String]            $mode       = undef,
   Boolean                     $unzip      = false,
   Optional[String]            $creates    = undef,
-  Boolean                     $azcopy     = false
+  Boolean                     $azcopy     = false,
+  Boolean                     $mkdir      = false
 ) {
 
   if $creates {
@@ -70,7 +71,8 @@ define blob (
     blob_path  => $blob_path,
     unzip      => $unzip,
     file_asset => $file_asset,
-    azcopy     => $azcopy
+    azcopy     => $azcopy,
+    mkdir      => $mkdir
   }
 
   file { $file_asset:
