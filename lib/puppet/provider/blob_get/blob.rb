@@ -58,7 +58,7 @@ Puppet::Type.type(:blob_get).provide(:default) do
       Puppet::Util::Execution.execute(wait_for_lock_cmd) if Facter.value(:osfamily) == 'windows'
     end
 
-    if @resource[:unzip] == true and @resource[:mkdir] == true
+    if @resource[:unzip] == true && @resource[:mkdir] == true
       unzip_dir_name = File.basename(@resource[:path], File.extname(@resource[:path]))
       working_path = File.dirname(@resource[:path]) + '/' + unzip_dir_name
       Dir.mkdir(working_path)
